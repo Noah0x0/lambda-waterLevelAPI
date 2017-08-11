@@ -17,6 +17,8 @@ def lambda_handler(event, context):
         result_dict = {}
         result_dict['riverName'] = json_dict['masterData']['riverName']
         result_dict['height'] = json_dict['customData']['stageAlarmLv7']
+        result_dict['timestamp'] = json_dict['masterData']['etim']
+        result_dict['waterLevel'] = json_dict['timeLineData'][-1]['4_10']['dataStr']
         result_dict['latestDate'] = json_dict['timeLineData'][-1]
         
         # print(result_dict)
