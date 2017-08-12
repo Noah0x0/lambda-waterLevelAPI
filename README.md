@@ -14,19 +14,13 @@ Parameter : ComingSoon
 以下の Json を返します。
 ~~~
 {
-   "riverName": "浅野川",
-   "height": "5.50",
-   "timestamp": "2017-08-11-14-30",
-   "waterLevel": "0.48",
-   "latestDate": {
-     "obsTime": "14時30分",
-     "4_10": {
-      "dataStr": "0.48",
-      "cssStr": "stageLevel0",
-      "dataTrend": "↑",
-      "dataLevel": 0
-    }
-  }
+  "riverName":"浅野川",
+  "height":"5.50",
+  "timestamp":"08月12日 15時30分",
+  "waterLevel":"0.73",
+  "dataTrend":"→",
+  "dataLevel":0,
+  "observatory":"金沢市沖橋(諸江)"
 }
 ~~~
 
@@ -34,4 +28,8 @@ riverName : 川の名前
 height : 川の防波堤の高さ  
 timestamp : 観測時点の日時  
 waterLevel : 観測時点の水位  
-latestDate : 最新情報  
+dataTrend : 直前のデータより水位が上昇・下降したかどうか
+dataLevel : 水位の危険度
+observatory : 観測地点
+
+
