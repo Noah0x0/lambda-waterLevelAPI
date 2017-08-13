@@ -1,4 +1,3 @@
 urllib
 lxml
-BeautifulSoup
-bs4
+beautifulsoup4
