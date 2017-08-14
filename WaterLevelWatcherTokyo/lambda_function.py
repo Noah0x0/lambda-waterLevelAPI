@@ -8,7 +8,7 @@ from datetime import datetime
 
 # 保存先のS3
 S3_BUCKET = 'test-uodu-s3'
-PREFIX = 'waterLevel/tokyo/arakawa/'
+PREFIX = 'waterLevel/japan/tokyo/arakawa/'
 client = boto3.client('s3', region_name='ap-northeast-1')
 
 def request_waterlevel():
