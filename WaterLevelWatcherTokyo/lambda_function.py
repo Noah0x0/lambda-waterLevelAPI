@@ -30,7 +30,7 @@ def html_parse(html):
     water_level = format_text(html.select("td.tb1td2Right")[-1].string)
     trend = format_text(html.select("td.tb1td1")[-1].string)
     # 危険度もないため、モック
-    data_lovel = ""
+    data_level = ""
     observatory = format_text(html.find("td", class_="tb1td2Left").get_text("|", strip=True))
 
     json_dict = {}
