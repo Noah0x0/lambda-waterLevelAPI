@@ -1,9 +1,10 @@
-import datetime
 import urllib.request
 import boto3
 import bs4
 import re
 import json
+from pytz import timezone
+from datetime import datetime
 
 # 保存先のS3
 S3_BUCKET = 'test-uodu-s3'
@@ -19,11 +20,9 @@ def html_parse(html):
     river_name = format_text(html.find("td", class_="tb1td2").string)
     # 川の高さデータが参照先のページにないためモック(荒川の危険氾濫水位)をセット
     height = "7.70"
-    
     # 取得時点の時刻をutcとISO8601へ変換する
     date = format_text(html.select("td.tb1td1Right")[-1].string)
     timestamp = format_timestamp(date)
-
     water_level = format_text(html.select("td.tb1td2Right")[-1].string)
     trend = format_text(html.select("td.tb1td1")[-1].string)
     # 参照先のページに氾濫危険レベルの情報もないためモック(空文字)をセット
@@ -36,22 +35,23 @@ def html_parse(html):
     json_dict['timestamp'] = timestamp
     json_dict['waterLevel'] = water_level
     json_dict['dataTrend'] = trend
-    json_dict['dataLevel'] = data_lovel
+    json_dict['dataLevel'] = data_level
     json_dict['observatory'] = observatory
 
     return json_dict
 
 def format_timestamp(date):
-    year = datetime.now().year
+    year = int(datetime.now().strftime('%Y'))
     words = date.split(" ")
     month_day = words[0].split("/")
-    month = month_day[0]
-    day = month_day[1]
+    month = int(month_day[0])
+    day = int(month_day[1])
     hour_minute = words[1].split(":")
-    hour = hour_minute[0]
-    minute = hour_minute[1]
+    hour = int(hour_minute[0])
+    minute = int(hour_minute[1])
 
-    timestamp_utc = dtimezone('UTC').localize(datetime(year, month, day, hour, minute, 00))
+    timestamp_jst = datetime(year, month, day, hour, minute)
+    timestamp_utc = timezone('UTC').localize(timestamp_jst).strftime('%Y-%m-%dT%H:%M:%S')
     return timestamp_utc
 
 def format_text(text):
@@ -66,7 +66,7 @@ def put_s3(json_dict):
     month = words[0].split("-")[1]
     day = words[0].split("-")[2]
     time = words[1]
-    key = PREFIX+"/"+year+"/"+month+"/"+day+"/"+time+".json"
+    key = PREFIX+year+"/"+month+"/"+day+"/"+time+".json"
     print(key)
 
     response = client.put_object(
@@ -74,7 +74,7 @@ def put_s3(json_dict):
         Body=json.dumps(json_dict),
         Bucket=S3_BUCKET,
         Key=key)
-
+    print(key)
     return response
 
 def lambda_handler(event, context):
