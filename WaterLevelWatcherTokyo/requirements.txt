@@ -1,3 +1,1 @@
-urllib
-lxml
 beautifulsoup4
