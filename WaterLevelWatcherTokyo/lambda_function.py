@@ -51,7 +51,9 @@ def format_timestamp(date):
     minute = int(hour_minute[1])
 
     timestamp_jst = datetime(year, month, day, hour, minute)
-    timestamp_utc = timezone('UTC').localize(timestamp_jst).strftime('%Y-%m-%dT%H:%M:%S')
+    print(timestamp_jst)
+    timestamp_utc = timestamp_jst.astimezone(timezone('UTC')).isoformat()
+    print(timestamp_utc)
     return timestamp_utc
 
 def format_text(text):
