@@ -1,8 +1,8 @@
 import urllib.request
 import boto3
-import bs4
 import re
 import json
+from bs4 import BeautifulSoup
 from pytz import timezone
 from datetime import datetime
 
@@ -13,7 +13,7 @@ client = boto3.client('s3', region_name='ap-northeast-1')
 
 def request_waterlevel():
     url = "http://www.river.go.jp/kawabou/ipSuiiKobetu.do?obsrvId=2128100400006&gamenId=01-1003&stgGrpKind=survOnly&fldCtlParty=no&fvrt=yes&timeType=10"
-    html = bs4.BeautifulSoup(urllib.request.urlopen(url).read(), 'html.parser')
+    html = BeautifulSoup(urllib.request.urlopen(url).read(), 'html.parser')
     return html
 
 def html_parse(html):
