@@ -12,29 +12,26 @@ client = boto3.client('s3', region_name='ap-northeast-1')
 
 def request_waterlevel():
     url = "http://www.river.go.jp/kawabou/ipSuiiKobetu.do?obsrvId=2128100400006&gamenId=01-1003&stgGrpKind=survOnly&fldCtlParty=no&fvrt=yes&timeType=10"
-    #html = bs4.BeautifulSoup(urllib.request.urlopen(url).read(), 'lxml')
     html = bs4.BeautifulSoup(urllib.request.urlopen(url).read(), 'html.parser')
     return html
 
 def html_parse(html):
-    now = datetime.datetime.now()
-    now.strftime("%Y-%m-%dT%H:%M:%S")
-
-    riverName = format_text(html.find("td", class_="tb1td2").string)
-    # 川の高さデータが参照先のページにないため、モック、一旦荒川の氾濫危険水位を
+    river_name = format_text(html.find("td", class_="tb1td2").string)
+    # 川の高さデータが参照先のページにないためモック(荒川の危険氾濫水位)をセット
     height = "7.70"
+    
+    # 取得時点の時刻をutcとISO8601へ変換する
     date = format_text(html.select("td.tb1td1Right")[-1].string)
-    words = date.split(" ")
-    yearmonth = words[0].split("/")
-    timestamp = now.strftime("%Y") + "-" + yearmonth[0] + "-" + yearmonth[1] + "T" + words[1] + ":00"
+    timestamp = format_timestamp(date)
+
     water_level = format_text(html.select("td.tb1td2Right")[-1].string)
     trend = format_text(html.select("td.tb1td1")[-1].string)
-    # 危険度もないため、モック
-    data_level = ""
+    # 参照先のページに氾濫危険レベルの情報もないためモック(空文字)をセット
+    data_level = 0
     observatory = format_text(html.find("td", class_="tb1td2Left").get_text("|", strip=True))
 
     json_dict = {}
-    json_dict['riverName'] = riverName
+    json_dict['riverName'] = river_name
     json_dict['height'] = height
     json_dict['timestamp'] = timestamp
     json_dict['waterLevel'] = water_level
@@ -43,6 +40,19 @@ def html_parse(html):
     json_dict['observatory'] = observatory
 
     return json_dict
+
+def format_timestamp(date):
+    year = datetime.now().year
+    words = date.split(" ")
+    month_day = words[0].split("/")
+    month = month_day[0]
+    day = month_day[1]
+    hour_minute = words[1].split(":")
+    hour = hour_minute[0]
+    minute = hour_minute[1]
+
+    timestamp_utc = dtimezone('UTC').localize(datetime(year, month, day, hour, minute, 00))
+    return timestamp_utc
 
 def format_text(text):
     text =re.sub('\r', "", text)
