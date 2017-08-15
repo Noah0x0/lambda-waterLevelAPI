@@ -6,8 +6,11 @@
 
 ## Request
 Method : GET  
-Endpoint : /production/water-level  
-Parameter : ComingSoon  
+Endpoint : /production/water-level?country="japana"&prefectures="tokyo"&river="arakawa"  
+Parameter :   
+1. country : 国名
+2. prefectures : 都道府県
+3. river : 河川名
 
 ## Response
 
