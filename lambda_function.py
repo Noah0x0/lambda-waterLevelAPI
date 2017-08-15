@@ -2,16 +2,45 @@ import json
 import urllib.parse
 import boto3
 
+bucket = 'test-uodu-s3'
+
 client = boto3.client('s3')
 
-bucket = 'test-uodu-s3'
-key = 'waterLevel.json'
+def get_latest_keyname(prefix):
+    # 国・都道府県・川名別の一覧を取得
+    list = client.list_objects(
+        Bucket=bucket,
+        Prefix=prefix
+    )
+    
+    # 最も更新日が新しいものを取得
+    if 'Contents' in list:
+        keys = {}
+        for content in list['Contents']:
+            keys[content['Key']] = content['LastModified']
+    target_key = max(keys, key=(lambda x: keys[x]))
+    
+    return target_key
+
+def get_waterlevel(target_key):
+    response = client.get_object(Bucket=bucket, Key=target_key)
+
+    body = response['Body'].read().decode('utf-8')
+    json_dict = json.loads(body)
+        
+    return json_dict
 
 def lambda_handler(event, context):
+    country = event['country']
+    prefectures = event['prefectures']
+    river = event['river']
+    prefix='waterLevel/'+country+'/'+prefectures+'/'+river+'/'
+    
     try:
-        response = client.get_object(Bucket=bucket, Key=key)
-        body = response['Body'].read().decode('utf-8')
-        json_dict = json.loads(body)
+        # 最新のファイル名を取得
+        target_key = get_latest_keyname(prefix)
+        # ファイル名をkeyとしてS3からデータ取得
+        json_dict = get_waterlevel(target_key)
         
         return json_dict
     except Exception as e:
