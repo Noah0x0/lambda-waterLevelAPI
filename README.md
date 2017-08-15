@@ -31,5 +31,3 @@ waterLevel : 観測時点の水位
 dataTrend : 直前のデータより水位が上昇・下降したかどうか
 dataLevel : 水位の危険度
 observatory : 観測地点
-
-
