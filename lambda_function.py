@@ -31,10 +31,14 @@ def get_waterlevel(target_key):
     return json_dict
 
 def lambda_handler(event, context):
-    country = event['country']
-    prefectures = event['prefectures']
-    river = event['river']
-    prefix='waterLevel/'+country+'/'+prefectures+'/'+river+'/'
+    # パラメータが不正な場合のデフォルトを荒川に
+    if (set(event) >= {'country', 'prefectures', 'river'}):
+        country = event['country'] if len(event['country']) != 0 else 'japan'
+        prefectures = event['prefectures'] if len(event['prefectures']) != 0 else 'tokyo'
+        river = event['river'] if len(event['river']) != 0 else 'arakawa'
+        prefix='waterLevel/'+country+'/'+prefectures+'/'+river+'/'
+    else:
+        prefix = 'waterLevel/japan/tokyo/arakawa/'
     
     try:
         # 最新のファイル名を取得
