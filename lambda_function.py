@@ -1,8 +1,10 @@
 import json
 import urllib.parse
 import boto3
+import datetime
 
 bucket = 'test-uodu-s3'
+target = 'waterLevel'
 
 client = boto3.client('s3')
 
@@ -31,14 +33,19 @@ def get_waterlevel(target_key):
     return json_dict
 
 def lambda_handler(event, context):
+    # prefix用に年月取得
+    now = datetime.datetime.now()
+    year = str(now.strftime('%Y'))
+    month = str(now.strftime('%m'))
+    
     # パラメータが不正な場合のデフォルトを荒川に
     if (set(event) >= {'country', 'prefectures', 'river'}):
         country = event['country'] if len(event['country']) != 0 else 'japan'
         prefectures = event['prefectures'] if len(event['prefectures']) != 0 else 'tokyo'
         river = event['river'] if len(event['river']) != 0 else 'arakawa'
-        prefix='waterLevel/'+country+'/'+prefectures+'/'+river+'/'
+        prefix = target + '/' + country + '/' + prefectures + '/' + river + '/' + year + '/' + month + '/'
     else:
-        prefix = 'waterLevel/japan/tokyo/arakawa/'
+        prefix = 'waterLevel/japan/tokyo/arakawa/' + year + '/' + month + '/'
     
     try:
         # 最新のファイル名を取得
