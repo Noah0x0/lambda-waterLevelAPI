@@ -30,7 +30,7 @@ def get_waterlevel(target_key):
     body = response['Body'].read().decode('utf-8')
     #json_str = json.loads(body)
         
-    return body
+    return json.dumps(body)
 
 def set_response_body(status_code, body):
     headers = {}
@@ -44,22 +44,26 @@ def set_response_body(status_code, body):
     return res_body
 
 def lambda_handler(event, context):
-    print(event)
     # prefix用に年月取得
     now = datetime.datetime.now()
     year = str(now.strftime('%Y'))
     month = str(now.strftime('%m'))
     
-    params = event['queryStringParameters']
-    # パラメータが不正な場合のデフォルトを荒川に
+    # クエリが渡されてない場合
+    if (event['queryStringParameters'] is None):
+        return set_response_body(400, 'Bad Request')
+    else:
+        params = event['queryStringParameters']
+        
+    # クエリパラメータが不正な場合のデフォルトを荒川に
     if (set(params) >= {'country', 'prefectures', 'river'}):
         country = params['country'] if len(params['country']) != 0 else 'japan'
         prefectures = params['prefectures'] if len(params['prefectures']) != 0 else 'tokyo'
         river = params['river'] if len(params['river']) != 0 else 'arakawa'
         prefix = target + '/' + country + '/' + prefectures + '/' + river + '/' + year + '/' + month + '/'
     else:
-        prefix = 'waterLevel/japan/tokyo/arakawa/' + year + '/' + month + '/'
-    
+        return set_response_body(400, 'Bad Request')
+
     try:
         # 最新のファイル名を取得
         target_key = get_latest_keyname(prefix)
