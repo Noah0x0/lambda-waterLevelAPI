@@ -57,9 +57,9 @@ def lambda_handler(event, context):
         
     # クエリパラメータが不正な場合のデフォルトを荒川に
     if (set(params) >= {'country', 'prefectures', 'river'}):
-        country = params['country'] if len(params['country']) != 0 else 'japan'
-        prefectures = params['prefectures'] if len(params['prefectures']) != 0 else 'tokyo'
-        river = params['river'] if len(params['river']) != 0 else 'arakawa'
+        country = params['country']
+        prefectures = params['prefectures']
+        river = params['river']
         prefix = target + '/' + country + '/' + prefectures + '/' + river + '/' + year + '/' + month + '/'
     else:
         return set_response_body(400, 'Bad Request')
