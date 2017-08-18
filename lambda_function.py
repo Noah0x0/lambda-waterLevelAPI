@@ -26,11 +26,8 @@ def get_latest_keyname(prefix):
 
 def get_waterlevel(target_key):
     response = client.get_object(Bucket=bucket, Key=target_key)
-
     body = response['Body'].read().decode('utf-8')
-    #json_str = json.loads(body)
-        
-    return json.dumps(body)
+    return body
 
 def set_response_body(status_code, body):
     headers = {}
