@@ -19,7 +19,7 @@ Parameter :
 {
   "riverName":"荒川",
   "height":"5.50",
-  "timestamp":"2017-08-18T23:00:00",
+  "timestamp":"2017-08-18T23:00:00Z",
   "waterLevel":"0.73",
   "dataTrend":"→",
   "dataLevel":0,
