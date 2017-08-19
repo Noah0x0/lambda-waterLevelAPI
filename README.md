@@ -6,11 +6,11 @@
 
 ## Request
 Method : GET  
-Endpoint : /production/water-level?country="japan"&prefectures="tokyo"&river="arakawa"  
-Parameter :   
-1. country : 国名
-2. prefectures : 都道府県
-3. river : 河川名
+Endpoint : /production/water-level/japan/tokyo/arakawa  
+Path Parameter :   
+1. japan : 国名を指定 ex)japan, taiwan
+2. tokyo : 都道府県を指定 ex)tokyo, taipei
+3. arakawa : 河川名を指定 ex)arakawa, danshui
 
 ## Response
 

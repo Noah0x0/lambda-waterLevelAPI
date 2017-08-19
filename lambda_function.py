@@ -47,10 +47,10 @@ def lambda_handler(event, context):
     month = str(now.strftime('%m'))
     
     # クエリが渡されてない場合
-    if (event['queryStringParameters'] is None):
-        return set_response_body(400, 'Bad Request')
+    if (event['pathParameters'] is None):
+        return set_response_body(400, 'Bad Request No PathParameters')
     else:
-        params = event['queryStringParameters']
+        params = event['pathParameters']
         
     # クエリパラメータが不正な場合のデフォルトを荒川に
     if (set(params) >= {'country', 'prefectures', 'river'}):
@@ -59,7 +59,7 @@ def lambda_handler(event, context):
         river = params['river']
         prefix = target + '/' + country + '/' + prefectures + '/' + river + '/' + year + '/' + month + '/'
     else:
-        return set_response_body(400, 'Bad Request')
+        return set_response_body(400, 'Bad Request No Item')
 
     try:
         # 最新のファイル名を取得
@@ -70,4 +70,4 @@ def lambda_handler(event, context):
         return set_response_body(200, json_str)
     except Exception as e:
         print(e)
-        return set_response_body(400, 'Bad Request')
+        return set_response_body(500, 'File Not Found')
